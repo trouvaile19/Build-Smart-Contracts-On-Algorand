@@ -41,4 +41,5 @@ class LesCompile(ARC4Contract):
 # @arc4.abimethod to definite SC methods for Algorand (), save method on SC.
 # Check that txn sender (Txn.sender) must match the creator txn (creator_address),
 # so that we can avoid being adjusting contract by any people who know asset_id.
-# gtxn retrieves data from the global transaction to synchronize with all nodes on BC
+# gtxn retrieves data from the global transaction to synchronize with all nodes on BC.
+# 'algokit project run build -t contract' to compile on terminal
