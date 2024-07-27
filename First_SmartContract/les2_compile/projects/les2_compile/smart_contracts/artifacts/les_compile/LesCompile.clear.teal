@@ -1,0 +1,7 @@
+#pragma version 10
+
+smart_contracts.les_compile.contract.LesCompile.clear_state_program:
+    // smart_contracts/les_compile/contract.py:9
+    // class LesCompile(ARC4Contract):
+    int 1
+    return
