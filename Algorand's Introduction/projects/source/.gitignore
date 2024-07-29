@@ -2,10 +2,9 @@
 /.venv/*
 /.vscode/*
 /.algokit/*
-.algokit.toml
-.poetry.toml
+*.toml
 .editorconfig
-.poetry.lock
+*.lock
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
