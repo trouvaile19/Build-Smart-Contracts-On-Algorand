@@ -1,8 +1,11 @@
 # not important
 /.venv/*
 /.vscode/*
-/.algokit.toml
-/.poetry.toml
+/.algokit/*
+.algokit.toml
+.poetry.toml
+.editorconfig
+.poetry.lock
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
