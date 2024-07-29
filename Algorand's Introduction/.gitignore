@@ -1,6 +1,7 @@
 /.algokit/*
 /.vscode/*
-/.algokit.toml/
-/.editorconfig/
-/.gitattributes/
-/.IntergateSC.code-workspace/
+/.algokit.toml
+/.editorconfig
+/.gitattributes
+/.IntergateSC.code-workspace
+*.toml
