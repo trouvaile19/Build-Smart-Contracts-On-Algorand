@@ -1,9 +1,16 @@
+.vscode/
+.algokit/
+.algokit.toml
+.editorconfig
+.gitattributes
+.github/
 # Byte-compiled / optimized / DLL files
+/.github/*
 /.vscode/*
 /.algokit/*
-/.algokit.toml/
-/.editorconfig/
-/.gitattributes/
+/.algokit.toml
+/.editorconfig
+/.gitattributes
 __pycache__/
 *.py[cod]
 *$py.class
