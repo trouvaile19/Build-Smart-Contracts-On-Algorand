@@ -1,0 +1,7 @@
+#pragma version 10
+
+smart_contracts.auction.contract.Auction.clear_state_program:
+    // projects/auction/smart_contracts/auction/contract.py:6
+    // class Auction(ARC4Contract):
+    int 1
+    return
