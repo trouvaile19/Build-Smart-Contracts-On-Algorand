@@ -3,9 +3,10 @@
 .tours/
 .venv/
 .vscode/
-.algokit.toml
-.poetry.lock
-.poetry.toml
+/.algokit.toml
+/.poetry.lock
+/.poetry.toml
+/pre-commit-config.yaml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
