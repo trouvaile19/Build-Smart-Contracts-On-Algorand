@@ -4,6 +4,7 @@
 .algokit.toml
 .editorconfig
 .gitattributes
+.auction.code-workspace
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
