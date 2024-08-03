@@ -1,0 +1,46 @@
+  - [[#install-python-sdk][Install Python SDK]]
+  - [[#clone-sandbox-code][Clone Sandbox Code]]
+  - [[#start][Start]]
+
+** Install Python SDK
+#+begin_src sh :results output
+pip install py-algorand-sdk
+or
+pip3 install py-algorand-sdk
+#+end_src
+
++ Another Way
+#+begin_src sh :results output
+python3 -m pip install py-algorand-sdk
+#+end_src
+
+** Clone Sandbox Code
+#+begin_src sh :results output
+git clone https://github.com/algorand/sandbox.git
+#+end_src
+
+#+begin_src sh :results output
+cd sandbox
+./sandbox up testnet -v
+#+end_src
+
+** Start
+#+begin_src python
+from algosdk import account, encoding
+
+# generate an account
+private_key, address = account.generate_account()
+print("Private key:", private_key)
+print("Address:", address)
+
+# check if the address is valid
+if encoding.is_valid_address(address):
+    print("The address is valid!")
+else:
+    print("The address is invalid.")
+#+end_src
+
+
+#+begin_src sh :results output
+python3 example.py
+#+end_src
