@@ -1,0 +1,7 @@
+#pragma version 10
+
+smart_contracts.ama.contract.Ama.clear_state_program:
+    // smart_contracts/ama/contract.py:5
+    // class Ama(ARC4Contract):
+    int 1
+    return
