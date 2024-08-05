@@ -1,0 +1,204 @@
+#pragma version 10
+
+smart_contracts.counter.contract.Counter.approval_program:
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@8
+    method "add(uint64,uint64)uint64"
+    method "mul(uint64,uint64)uint64"
+    method "sub(uint64,uint64)uint64"
+    method "div(uint64,uint64)uint64"
+    txna ApplicationArgs 0
+    match main_add_route@2 main_mul_route@3 main_sub_route@4 main_div_route@5
+    err // reject transaction
+
+main_add_route@2:
+    // smart_contracts/counter/contract.py:6
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/counter/contract.py:6
+    // @abimethod()
+    callsub add
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_mul_route@3:
+    // smart_contracts/counter/contract.py:10
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/counter/contract.py:10
+    // @abimethod()
+    callsub mul
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_sub_route@4:
+    // smart_contracts/counter/contract.py:16
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/counter/contract.py:16
+    // @abimethod()
+    callsub sub
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_div_route@5:
+    // smart_contracts/counter/contract.py:21
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/counter/contract.py:21
+    // @abimethod()
+    callsub div
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@8:
+    // smart_contracts/counter/contract.py:4
+    // class Counter (ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.counter.contract.Counter.add(a: uint64, b: uint64) -> uint64:
+add:
+    // smart_contracts/counter/contract.py:6-7
+    // @abimethod()
+    // def add(self, a: UInt64, b: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/counter/contract.py:8
+    // return a + b
+    frame_dig -2
+    frame_dig -1
+    +
+    retsub
+
+
+// smart_contracts.counter.contract.Counter.mul(a: uint64, b: uint64) -> uint64:
+mul:
+    // smart_contracts/counter/contract.py:10-11
+    // @abimethod()
+    // def mul(self, a: UInt64, b: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/counter/contract.py:12
+    // assert a != 0, "a must be not equal 0"
+    frame_dig -2
+    assert // a must be not equal 0
+    // smart_contracts/counter/contract.py:13
+    // assert b != 0, "b must be not equal 0"
+    frame_dig -1
+    assert // b must be not equal 0
+    // smart_contracts/counter/contract.py:14
+    // return a * b
+    frame_dig -2
+    frame_dig -1
+    *
+    retsub
+
+
+// smart_contracts.counter.contract.Counter.sub(a: uint64, b: uint64) -> uint64:
+sub:
+    // smart_contracts/counter/contract.py:16-17
+    // @abimethod()
+    // def sub(self, a: UInt64, b: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/counter/contract.py:18
+    // assert a > b, "b must be lower than a"
+    frame_dig -2
+    frame_dig -1
+    >
+    assert // b must be lower than a
+    // smart_contracts/counter/contract.py:19
+    // return a - b
+    frame_dig -2
+    frame_dig -1
+    -
+    retsub
+
+
+// smart_contracts.counter.contract.Counter.div(a: uint64, b: uint64) -> uint64:
+div:
+    // smart_contracts/counter/contract.py:21-22
+    // @abimethod()
+    // def div(self, a: UInt64, b: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/counter/contract.py:23
+    // assert a != 0, "a must be not equal 0"
+    frame_dig -2
+    assert // a must be not equal 0
+    // smart_contracts/counter/contract.py:24
+    // assert b != 0, "b must be not equal 0"
+    frame_dig -1
+    assert // b must be not equal 0
+    // smart_contracts/counter/contract.py:25
+    // return a // b
+    frame_dig -2
+    frame_dig -1
+    /
+    retsub
