@@ -6,7 +6,7 @@
 .algokit.toml
 .editorconfig
 .pre-commit-config.yaml
-poetrylock
+poetry.lock
 poetry.toml
 pyproject.toml
 
