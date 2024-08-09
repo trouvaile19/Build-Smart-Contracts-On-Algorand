@@ -2,7 +2,7 @@ from algopy import ARC4Contract, Account, Asset, Global, LocalState, String, Txn
 from algopy.arc4 import abimethod
 
 
-class Auction(ARC4Contract):
+class AuctionContract(ARC4Contract):
     # Auction
     # Start Price
     # Bid - Bid Price > Start Price 
@@ -15,17 +15,17 @@ class Auction(ARC4Contract):
     def __init__(self) -> None:
         self.start_time = UInt64(0) # auction start
         self.end_time = UInt64(0) # auction end
+        self.previous_bid = UInt64(0)
         self.asa_amount = UInt64(0) # 1000 - bid price > asa amount 
         self.asa = Asset() # Tokens (ex: VBI Tokens) -> call in once
-        self.previous_bidder = Account()
-        self.claimble_amount = LocalState(UInt64, key = "claim", description = "the claimble amount") # key - value
+        self.claimable_amount = LocalState(UInt64, key = "claim", description = "the claimble amount") # key - value
 
     # Opt Asset (? Tokens)
     @arc4.abimethod # asset VBI tokens 
     def opt_into_asset(self, asset: Asset) -> None: # đưa sản phầm đấu giá vào
-        assert Txn.sender == Global.creator_address, "Only creator has  access"
-        assert self.asa == 0, "ASA already exists"
-        self.asa = asset
+        assert Txn.sender == Global.creator_address, "Only creator can opt into ASA"
+        assert self.asa.id == 0, "ASA already opted in"
+        self.asa = asset # gắn asset vào để đấu giá
         itxn.AssetTransfer (
             xfer_asset = asset,
             asset_receiver = Global.current_application_address
@@ -33,36 +33,51 @@ class Auction(ARC4Contract):
         ).submit()
 
     # Start Auction 
-    def start_auction(self, starting_price: UInt64, duration: UInt64, axfer: gtxn.AssetTransferTransaction) -> None: # bắt đầu đáu giá
+    def start_auction(self, starting_price: UInt64, length: UInt64, axfer: gtxn.AssetTransferTransaction) -> None: # bắt đầu đáu giá
         assert Txn.sender == Global.creator_address, "Auction must be started by creator"
-        assert self.end_time == 0, "Auction ended"
+        # Ensure the auction hasn't already been started
+        assert self.end_time == 0, "Auction already started"
+        # Verify axfer
         assert axfer.asset_receiver == Global.current_application_address, "Axfer must be to this application"
-
-        self.asa_amount = starting_price 
-        self.end_time = duration + Global.latest_timestamp
+        # Set global state
+        self.asa_amount = axfer.asset_amount 
+        self.end_time = length + Global.latest_timestamp
         # global -> Unix Time -> 012312419 + 10001
-        self.previous_bidder = Txn.sender
+        self.previous_bid = starting_price
     
     # Bids
     @arc4.abimethod
     def bid(self, pay: gtxn.PaymentTransaction) -> None: # đấu giá
         # check the auction ended or not
-        assert Global.latest_timestamp <= self.end_time, "auction ended"
+        assert Global.latest_timestamp < self.end_time, "auction ended"
 
-        #verufy payment
-        assert Txn.sender == self.previous_bidder, ""
-        assert Txn.sender == pay.sender, "verify again"
-        assert pay.amount > self.asa_amount
+        # verify payment transaction
+        assert pay.sender == Txn.sender, "Payment sender must match transaction sender"
+        assert pay.amount > self.previous_bid, "Bid must be higher than previous bid" 
 
-        # set data on global state
-        self.asa_amount = pay.amount
-        self.previous_bidder = Txn.sender
+        # set global state
+        self.previous_bid = pay.amount
+        self.previous_bidder = pay.sender
 
         # update claimable amount 
-        self.claimble_amount[Txn.sender] = pay.amount
+        self.claimable_amount[Txn.sender] = pay.amount
         # key (wallet address) -> value (amount)
 
     # Claim Bids
+    @arc4.abimethod
+    def claim_bids(self) -> None: 
+        amount = original_amount = self.claimable_amount[Txn.sender] # lấy được tokens mà pre-bidder có
+        # subtract previous bid if sender is previous bideer
+        if Txn.sender == self.previous_bidder:
+            amount = amount - self.previous_bid # -tokens after winning bid
+
+        itxn.Payment(
+            amount = amount,
+            receiver = Txn.sender,
+        ).submit()
+
+        self.claimable_amount[Txn.sender] = original_amount - amount
+    
     @arc4.abimethod
     def claim_asset(self, asset: Asset) -> None: # chuyển sản phẩn đấu giá cho người thắng cuộc
         assert Txn.sender == Global.creator_address, "Auction must be started by creator"
@@ -73,17 +88,6 @@ class Auction(ARC4Contract):
             asset_receiver = self.previous_bidder, # receiver who is a previous bidder
             asset_close_to = self.previous_bidder,
             asset_amount = self.asa_amount, # storage the highest amount bidded
-        ).submit()
-    
-    @arc4.abimethod
-    def claim_bids(self) -> None: 
-        amount = self.claimble_amount[Txn.sender] # lấy được tokens mà pre-bidder có
-        if Txn.sender == self.previous_bidder:
-            amount = amount - self.asa_amount # -tokens after winning bid
-
-        itxn.Payment(
-            amount = amount,
-            receiver = Txn.sender
         ).submit()
     
     # Delete Application
