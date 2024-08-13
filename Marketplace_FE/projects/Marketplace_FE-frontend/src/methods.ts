@@ -31,7 +31,7 @@ export function create(
             extraFee: algokit.algos(0.001) // function → Algorand → 0.001algos
         });
 
-        await dmClient.optInToAsset({pay: Txn});
+        await dmClient.optInToAsset({pay: Txn})
 
         await algogrand.send.assetTransfer({
             assetId,
