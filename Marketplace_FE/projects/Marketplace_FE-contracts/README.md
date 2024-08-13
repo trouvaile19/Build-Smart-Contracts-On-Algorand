@@ -1,4 +1,4 @@
-# marketplace-contracts
+# Marketplace_FE-contracts
 
 This project has been generated using AlgoKit. See below for default getting started instructions.
 
