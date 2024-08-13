@@ -12,10 +12,11 @@ import type {
   AppCallTransactionResultOfType,
   AppCompilationResult,
   AppReference,
+  AppState,
   AppStorageSchema,
   CoreAppCallArgs,
   RawAppCallArgs,
-  TealTemplateParams
+  TealTemplateParams,
 } from '@algorandfoundation/algokit-utils/types/app'
 import type {
   AppClientCallCoreParams,
@@ -25,9 +26,9 @@ import type {
   ApplicationClient,
 } from '@algorandfoundation/algokit-utils/types/app-client'
 import type { AppSpec } from '@algorandfoundation/algokit-utils/types/app-spec'
-import type { SendTransactionFrom, SendTransactionParams, SendTransactionResult, TransactionToSign } from '@algorandfoundation/algokit-utils/types/transaction'
+import type { SendTransactionResult, TransactionToSign, SendTransactionFrom, SendTransactionParams } from '@algorandfoundation/algokit-utils/types/transaction'
 import type { ABIResult, TransactionWithSigner } from 'algosdk'
-import { Algodv2, AtomicTransactionComposer, modelsv2, OnApplicationComplete, Transaction } from 'algosdk'
+import { Algodv2, OnApplicationComplete, Transaction, AtomicTransactionComposer, modelsv2 } from 'algosdk'
 export const APP_SPEC: AppSpec = {
   "hints": {
     "hello(string)string": {
@@ -252,6 +253,9 @@ export abstract class MarketplaceCallFactory {
  * A client to make calls to the Marketplace smart contract
  */
 export class MarketplaceClient {
+  optInToAsset(arg0: { pay: Transaction }) {
+    throw new Error('Method not implemented.')
+  }
   /**
    * The underlying `ApplicationClient` for when you want to have more flexibility
    */

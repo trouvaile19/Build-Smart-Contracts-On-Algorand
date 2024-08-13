@@ -1,7 +1,7 @@
 // src/components/Home.tsx
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { useWallet } from '@txnlab/use-wallet'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AppCalls from './components/AppCalls'
 import ConnectWallet from './components/ConnectWallet'
 import MethodCall from './components/methodCall'
@@ -24,6 +24,7 @@ const Home: React.FC<HomeProps> = () => {
   const [quantity, setquantity] = useState<bigint>(0n)
   const [seller, setSeller] = useState<string>("")
   const [unitsLeft, setUnitleft] = useState<bigint>(0n)
+
 
   const toggleWalletModal = () => {
     setOpenWalletModal(!openWalletModal)

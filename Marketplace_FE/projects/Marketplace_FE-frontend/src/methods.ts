@@ -43,3 +43,40 @@ export function create(
         setAppId(Number(createResult.appId));
     }
 }
+export function buy(
+  algogrand: algokit.AlgorandClient,
+  dmClient: MarketplaceClient,
+  sender: string,
+  appAddress: string,
+  quantity: bigint,
+  unitaryPrice: bigint,
+  setUnitsLeft: React.Dispatch<React.SetStateAction<bigint>>
+) {
+  return async () => {
+      const buyerTxn = await algogrand.transactions.payment({
+          sender,
+          receiver: appAddress,
+          amount: algokit.microAlgos(Number(quantity * unitaryPrice)),
+          extraFee: algokit.algos(0.001)
+      })
+
+      await dmClient.buy({
+          payer: buyerTxn,
+          quantity
+      })
+
+      const state = await dmClient.getGlobalState();
+      const info = await algogrand.account.getAssetInformation(appAddress, state.assetId!.asBigInt())
+      setUnitsLeft(info.balance)
+  }
+}
+
+export function deleteApp(
+  dmClient: MarketplaceClient,
+  setAppId: (id: number) => void
+) {
+  return async () => {
+      await dmClient.delete.deleteApplication({}, {sendParams: {fee: algokit.algos(0.003)}})
+      setAppId(0)
+  }
+}
