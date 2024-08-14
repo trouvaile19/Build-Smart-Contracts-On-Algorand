@@ -184,3 +184,35 @@ class AdvMarketplace(ARC4Contract):
             amount = highest_bid_amount,
             free = 0
         ).submit()
+    
+    @abimethod
+    def withdraw(self, asset: Asset, nonce: arc4.UInt64) -> None:
+        box_key = Txn.sender.bytes + op.itob(asset.id) + nonce.bytes
+        
+        current_bidder = Account(op.Box.extract(box_key, 16, 32))
+        current_deposit = op.btoi(op.Box.extract(box_key, 0, 8))
+        if current_bidder != Global.zero_address:
+            current_bid_remainder = self._quantity_price(
+                op.btoi(op.Box.extract(box_key, 48, 8)),
+                op.btoi(op.Box.extract(box_key, 56, 8)),
+                asset.decimals       
+            )
+            itxn.Payment(
+                receiver = current_bidder,
+                amount = current_bid_remainder,
+                fee = 0
+            ).submit()
+
+        _delete = op.Box.delete(box_key)
+
+        itxn.Payment(
+            receiver = Txn.sender,
+            amount = MINIMUM_FEE_FOR_SALE,
+            fee = 0
+        ).submit()
+
+        itxn.AssetTransfer(
+            xfer_asset = asset,
+            asset_receiver = Txn.sender,
+            asset_amount = current_deposit
+        ).submit()
