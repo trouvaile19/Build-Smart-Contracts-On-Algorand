@@ -1,0 +1,1108 @@
+#pragma version 10
+
+smart_contracts.adv_marketplace.contract.AdvMarketplace.approval_program:
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@12
+    method "allow_access(string,pay,asset)void"
+    method "first_deposit(axfer,uint64,uint64,pay)void"
+    method "deposit(axfer,uint64)void"
+    method "set_price(uint64,uint64,uint64)void"
+    method "withdraw(asset,uint64)void"
+    method "buy(address,asset,uint64,pay,uint64)void"
+    method "bid(pay,asset,uint64,address,uint64,uint64)void"
+    method "accept_bid(asset,uint64)void"
+    txna ApplicationArgs 0
+    match main_allow_access_route@2 main_first_deposit_route@3 main_deposit_route@4 main_set_price_route@5 main_withdraw_route@6 main_buy_route@7 main_bid_route@8 main_accept_bid_route@9
+    err // reject transaction
+
+main_allow_access_route@2:
+    // smart_contracts/adv_marketplace/contract.py:34
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    extract 2 0
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    // smart_contracts/adv_marketplace/contract.py:34
+    // @abimethod()
+    callsub allow_access
+    int 1
+    return
+
+main_first_deposit_route@3:
+    // smart_contracts/adv_marketplace/contract.py:48-50
+    //     # Keys -> Values
+    //     # asset_id (unitary_price) -> amounts -> Box (storage) -> Bytes
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txn GroupIndex
+    int 2
+    -
+    dup
+    gtxns TypeEnum
+    int axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/adv_marketplace/contract.py:48-50
+    //     # Keys -> Values
+    //     # asset_id (unitary_price) -> amounts -> Box (storage) -> Bytes
+    // @abimethod()
+    callsub first_deposit
+    int 1
+    return
+
+main_deposit_route@4:
+    // smart_contracts/adv_marketplace/contract.py:75-76
+    //     # global state
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    // smart_contracts/adv_marketplace/contract.py:75-76
+    //     # global state
+    // @abimethod
+    callsub deposit
+    int 1
+    return
+
+main_set_price_route@5:
+    // smart_contracts/adv_marketplace/contract.py:91
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    // smart_contracts/adv_marketplace/contract.py:91
+    // @abimethod
+    callsub set_price
+    int 1
+    return
+
+main_withdraw_route@6:
+    // smart_contracts/adv_marketplace/contract.py:98
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    txna ApplicationArgs 2
+    // smart_contracts/adv_marketplace/contract.py:98
+    // @abimethod
+    callsub withdraw
+    int 1
+    return
+
+main_buy_route@7:
+    // smart_contracts/adv_marketplace/contract.py:131-132
+    // # retrancy attacks
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    txna ApplicationArgs 3
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 4
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:131-132
+    // # retrancy attacks
+    // @abimethod
+    callsub buy
+    int 1
+    return
+
+main_bid_route@8:
+    // smart_contracts/adv_marketplace/contract.py:163-164
+    // # start to bid
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    txna ApplicationArgs 5
+    // smart_contracts/adv_marketplace/contract.py:163-164
+    // # start to bid
+    // @abimethod
+    callsub bid
+    int 1
+    return
+
+main_accept_bid_route@9:
+    // smart_contracts/adv_marketplace/contract.py:196
+    // @abimethod # Terminated
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    txna ApplicationArgs 2
+    // smart_contracts/adv_marketplace/contract.py:196
+    // @abimethod # Terminated
+    callsub accept_bid
+    int 1
+    return
+
+main_bare_routing@12:
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.allow_access(name: bytes, mbr_pay: uint64, asset: uint64) -> void:
+allow_access:
+    // smart_contracts/adv_marketplace/contract.py:34-35
+    // @abimethod()
+    // def allow_access(self, name: String, mbr_pay: gtxn.PaymentTransaction, asset: Asset) -> None:
+    proto 3 0
+    // smart_contracts/adv_marketplace/contract.py:36
+    // assert not Global.current_application_address.is_opted_in(asset), "asset already exists"
+    global CurrentApplicationAddress
+    frame_dig -1
+    asset_holding_get AssetBalance
+    bury 1
+    !
+    assert // asset already exists
+    // smart_contracts/adv_marketplace/contract.py:38
+    // assert mbr_pay.receiver == Global.current_application_address
+    frame_dig -2
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:39
+    // assert mbr_pay.amount == Global.asset_opt_in_min_balance
+    frame_dig -2
+    gtxns Amount
+    global AssetOptInMinBalance
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:41-46
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Global.current_application_address,
+    //     asset_amount = 0,
+    //     fee = 0 # -> cover fee -> application
+    // ).submit()
+    itxn_begin
+    // smart_contracts/adv_marketplace/contract.py:43
+    // asset_receiver = Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/adv_marketplace/contract.py:44
+    // asset_amount = 0,
+    int 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    frame_dig -1
+    itxn_field XferAsset
+    // smart_contracts/adv_marketplace/contract.py:41
+    // itxn.AssetTransfer(
+    int axfer
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:45
+    // fee = 0 # -> cover fee -> application
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:41-46
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Global.current_application_address,
+    //     asset_amount = 0,
+    //     fee = 0 # -> cover fee -> application
+    // ).submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.first_deposit(xfer: uint64, nonce: bytes, unitary_price: bytes, mbr_pay: uint64) -> void:
+first_deposit:
+    // smart_contracts/adv_marketplace/contract.py:48-51
+    //     # Keys -> Values
+    //     # asset_id (unitary_price) -> amounts -> Box (storage) -> Bytes
+    // @abimethod()
+    // def first_deposit(self, xfer: gtxn.AssetTransferTransaction, nonce: arc4.UInt64, unitary_price: arc4.UInt64, mbr_pay: gtxn.PaymentTransaction) -> None:
+    proto 4 0
+    // smart_contracts/adv_marketplace/contract.py:52
+    // assert mbr_pay.sender == Txn.sender
+    frame_dig -1
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:53
+    // assert mbr_pay.receiver == Global.current_application_address
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:54
+    // assert mbr_pay.amount == FOR_SALE_BOX_MBR
+    frame_dig -1
+    gtxns Amount
+    int 47300
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:58-59
+    // # address + asset_id + nonce                                    arc4.Uint64 to calculate
+    // box_key = Txn.sender.bytes + op.itob(xfer.xfer_asset.id) + nonce.bytes
+    txn Sender
+    frame_dig -4
+    gtxns XferAsset
+    itob
+    concat
+    frame_dig -3
+    concat
+    // smart_contracts/adv_marketplace/contract.py:60-61
+    // # box -> [....]              # -> convert to bytes
+    // _length, exists = op.Box.length(box_key)
+    dup
+    box_len
+    bury 1
+    // smart_contracts/adv_marketplace/contract.py:62
+    // assert not exists
+    !
+    assert
+    // smart_contracts/adv_marketplace/contract.py:64
+    // assert xfer.sender == Txn.sender
+    frame_dig -4
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:65
+    // assert xfer.asset_receiver == Global.current_application_address
+    frame_dig -4
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:66
+    // assert xfer.asset_amount > 0
+    frame_dig -4
+    gtxns AssetAmount
+    dup
+    assert
+    // smart_contracts/adv_marketplace/contract.py:67-70
+    // # deposited, selling price, bidder, bid quantity, bid price
+    // # address (32) + UInt (8) + UInt (8) -> amount (8) + unitary_price (8)
+    // # 48 -> 16 = 64
+    // assert op.Box.create(box_key, FOR_SALE_BOX_VALUE_LENGTH) # assert tạo box -> 64 bit, if valid then storage
+    dig 1
+    int 64
+    box_create
+    assert
+    // smart_contracts/adv_marketplace/contract.py:71
+    // op.Box.replace(box_key, 0, op.itob(xfer.asset_amount) + unitary_price.bytes)
+    itob
+    frame_dig -2
+    concat
+    int 0
+    swap
+    box_replace
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.deposit(xfer: uint64, nonce: bytes) -> void:
+deposit:
+    // smart_contracts/adv_marketplace/contract.py:75-77
+    //     # global state
+    // @abimethod
+    // def deposit(self, xfer: gtxn.AssetTransferTransaction, nonce: arc4.UInt64) -> None:
+    proto 2 0
+    // smart_contracts/adv_marketplace/contract.py:78
+    // box_key = Txn.sender.bytes + op.itob(xfer.xfer_asset.id) + nonce.bytes
+    txn Sender
+    frame_dig -2
+    gtxns XferAsset
+    itob
+    concat
+    frame_dig -1
+    concat
+    // smart_contracts/adv_marketplace/contract.py:79
+    // _length, exists = op.Box.length(box_key)
+    dup
+    box_len
+    bury 1
+    // smart_contracts/adv_marketplace/contract.py:80
+    // assert exists
+    assert
+    // smart_contracts/adv_marketplace/contract.py:82
+    // assert xfer.sender == Txn.sender
+    frame_dig -2
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:83
+    // assert xfer.asset_receiver == Global.current_application_address
+    frame_dig -2
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:84
+    // assert xfer.asset_amount > 0
+    frame_dig -2
+    gtxns AssetAmount
+    dup
+    assert
+    // smart_contracts/adv_marketplace/contract.py:86-88
+    // # 100 -> tokens
+    // # 50 -> tokens (overiding) therefore need to plus current_amount
+    // current_deposited = op.btoi(op.Box.extract(box_key, 0, 8)) # storage int (by convert byte into int)
+    dig 1
+    int 0
+    int 8
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:89
+    // op.Box.replace(box_key, 0, op.itob(current_deposited + xfer.asset_amount)) # convert int into byte and storage
+    +
+    itob
+    int 0
+    swap
+    box_replace
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.set_price(asset: uint64, nonce: bytes, unitary_price: bytes) -> void:
+set_price:
+    // smart_contracts/adv_marketplace/contract.py:91-92
+    // @abimethod
+    // def set_price(self, asset : UInt64, nonce: arc4.UInt64, unitary_price: arc4.UInt64) -> None:
+    proto 3 0
+    // smart_contracts/adv_marketplace/contract.py:93
+    // box_key = Txn.sender.bytes + op.itob(asset) + nonce.bytes
+    txn Sender
+    frame_dig -3
+    itob
+    concat
+    frame_dig -2
+    concat
+    // smart_contracts/adv_marketplace/contract.py:95
+    // op.Box.replace(box_key, 8, unitary_price.bytes)
+    int 8
+    frame_dig -1
+    box_replace
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.withdraw(asset: uint64, nonce: bytes) -> void:
+withdraw:
+    // smart_contracts/adv_marketplace/contract.py:98-99
+    // @abimethod
+    // def withdraw(self, asset: Asset, nonce: arc4.UInt64) -> None:
+    proto 2 0
+    // smart_contracts/adv_marketplace/contract.py:100
+    // box_key = Txn.sender.bytes + op.itob(asset.id) + nonce.bytes
+    txn Sender
+    frame_dig -2
+    itob
+    concat
+    frame_dig -1
+    concat
+    dupn 2
+    // smart_contracts/adv_marketplace/contract.py:102
+    // current_deposit = op.btoi(op.Box.extract(box_key, 0, 8))
+    int 0
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:103
+    // current_bidder = Account(op.Box.extract(box_key, 16, 32))
+    int 16
+    int 32
+    box_extract
+    dupn 2
+    len
+    int 32
+    ==
+    assert // Address length is 32 bytes
+    // smart_contracts/adv_marketplace/contract.py:104
+    // if current_bidder != Global.zero_address:
+    global ZeroAddress
+    !=
+    bz withdraw_after_if_else@3
+    // smart_contracts/adv_marketplace/contract.py:106
+    // op.btoi(op.Box.extract(box_key, 48, 8)),
+    frame_dig 0
+    dup
+    int 48
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:107
+    // op.btoi(op.Box.extract(box_key, 56, 8)),
+    int 56
+    int 8
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:108
+    // asset.decimals,
+    frame_dig -2
+    asset_params_get AssetDecimals
+    assert // asset exists
+    // smart_contracts/adv_marketplace/contract.py:105-109
+    // current_bid_deposit = self.quantity_price(
+    //     op.btoi(op.Box.extract(box_key, 48, 8)),
+    //     op.btoi(op.Box.extract(box_key, 56, 8)),
+    //     asset.decimals,
+    // )
+    callsub quantity_price
+    // smart_contracts/adv_marketplace/contract.py:110-114
+    // itxn.Payment(
+    //     receiver = current_bidder,
+    //     amount = current_bid_deposit,
+    //     fee = 0
+    // ).submit()
+    itxn_begin
+    itxn_field Amount
+    frame_dig 2
+    itxn_field Receiver
+    // smart_contracts/adv_marketplace/contract.py:110
+    // itxn.Payment(
+    int pay
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:113
+    // fee = 0
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:110-114
+    // itxn.Payment(
+    //     receiver = current_bidder,
+    //     amount = current_bid_deposit,
+    //     fee = 0
+    // ).submit()
+    itxn_submit
+
+withdraw_after_if_else@3:
+    // smart_contracts/adv_marketplace/contract.py:116
+    // _delete = op.Box.delete(box_key)
+    frame_dig 0
+    box_del
+    pop
+    // smart_contracts/adv_marketplace/contract.py:118-122
+    // itxn.Payment(
+    //     receiver = Txn.sender,
+    //     amount = FOR_SALE_BOX_MBR,
+    //     fee = 0
+    // ).submit()
+    itxn_begin
+    // smart_contracts/adv_marketplace/contract.py:119
+    // receiver = Txn.sender,
+    txn Sender
+    // smart_contracts/adv_marketplace/contract.py:120
+    // amount = FOR_SALE_BOX_MBR,
+    int 47300
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/adv_marketplace/contract.py:118
+    // itxn.Payment(
+    int pay
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:121
+    // fee = 0
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:118-122
+    // itxn.Payment(
+    //     receiver = Txn.sender,
+    //     amount = FOR_SALE_BOX_MBR,
+    //     fee = 0
+    // ).submit()
+    itxn_submit
+    // smart_contracts/adv_marketplace/contract.py:124-129
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Txn.sender,
+    //     asset_amount = current_deposit,
+    //     fee = 0,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/adv_marketplace/contract.py:126
+    // asset_receiver = Txn.sender,
+    txn Sender
+    frame_dig 1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    frame_dig -2
+    itxn_field XferAsset
+    // smart_contracts/adv_marketplace/contract.py:124
+    // itxn.AssetTransfer(
+    int axfer
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:128
+    // fee = 0,
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:124-129
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Txn.sender,
+    //     asset_amount = current_deposit,
+    //     fee = 0,
+    // ).submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.quantity_price(quantity: uint64, price: uint64, asset_decimals: uint64) -> uint64:
+quantity_price:
+    // smart_contracts/adv_marketplace/contract.py:12-21
+    // # opt-into-access (co nhieu access hon)
+    // # allow_access
+    // # deposit
+    // # first_deposit
+    // # withdraw
+    // # buy
+    // @subroutine
+    // def quantity_price(
+    //     self, quantity: UInt64, price: UInt64, asset_decimals: UInt64
+    // ) -> UInt64:
+    proto 3 1
+    // smart_contracts/adv_marketplace/contract.py:22
+    // amount_not_scaled_high, amount_not_scaled_low = op.mulw(price, quantity)
+    frame_dig -2
+    frame_dig -3
+    mulw
+    swap
+    // smart_contracts/adv_marketplace/contract.py:23
+    // scaling_factor_high, scaling_factor_low = op.expw(10, asset_decimals)
+    int 10
+    frame_dig -1
+    expw
+    swap
+    // smart_contracts/adv_marketplace/contract.py:24-29
+    // _quotient_high, amount_to_be_paid, _remainder_high, _remainder_low = op.divmodw(
+    //     amount_not_scaled_high,
+    //     amount_not_scaled_low,
+    //     scaling_factor_high,
+    //     scaling_factor_low,
+    // )
+    uncover 2
+    uncover 3
+    uncover 2
+    uncover 3
+    divmodw
+    popn 2
+    swap
+    // smart_contracts/adv_marketplace/contract.py:30
+    // assert not _quotient_high
+    !
+    assert
+    // smart_contracts/adv_marketplace/contract.py:32
+    // return amount_to_be_paid
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.buy(owner: bytes, asset: uint64, nonce: bytes, buy_pay: uint64, quantity: uint64) -> void:
+buy:
+    // smart_contracts/adv_marketplace/contract.py:131-133
+    // # retrancy attacks
+    // @abimethod
+    // def buy(self, owner: arc4.Address, asset: Asset, nonce: arc4.UInt64, buy_pay: gtxn.PaymentTransaction, quantity: UInt64) -> None:
+    proto 5 0
+    // smart_contracts/adv_marketplace/contract.py:134
+    // box_key =  owner.bytes + op.itob(asset.id) + nonce.bytes
+    frame_dig -4
+    itob
+    frame_dig -5
+    swap
+    concat
+    frame_dig -3
+    concat
+    // smart_contracts/adv_marketplace/contract.py:135
+    // current_unitary_price = op.btoi(op.Box.extract(box_key, 8, 8))
+    dup
+    int 8
+    dup
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:138
+    // quantity, current_unitary_price, asset.decimals
+    frame_dig -4
+    asset_params_get AssetDecimals
+    assert // asset exists
+    // smart_contracts/adv_marketplace/contract.py:137-139
+    // amount_to_be_paid = self.quantity_price(
+    //     quantity, current_unitary_price, asset.decimals
+    // )
+    frame_dig -1
+    cover 2
+    callsub quantity_price
+    // smart_contracts/adv_marketplace/contract.py:141
+    // assert buy_pay.sender == Txn.sender
+    frame_dig -2
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:142
+    // assert buy_pay.receiver.bytes == owner.bytes
+    frame_dig -2
+    gtxns Receiver
+    frame_dig -5
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:143
+    // assert buy_pay.amount == amount_to_be_paid
+    frame_dig -2
+    gtxns Amount
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:152
+    // current_deposited = op.btoi(op.Box.extract(box_key, 0, 8))
+    dup
+    int 0
+    int 8
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:153
+    // op.Box.replace(box_key, 0, op.itob(current_deposited - quantity))
+    frame_dig -1
+    -
+    itob
+    int 0
+    swap
+    box_replace
+    // smart_contracts/adv_marketplace/contract.py:155-160
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Txn.sender,
+    //     asset_amount = quantity,
+    //     fee = 0
+    // ).submit()
+    itxn_begin
+    // smart_contracts/adv_marketplace/contract.py:157
+    // asset_receiver = Txn.sender,
+    txn Sender
+    frame_dig -1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    frame_dig -4
+    itxn_field XferAsset
+    // smart_contracts/adv_marketplace/contract.py:155
+    // itxn.AssetTransfer(
+    int axfer
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:159
+    // fee = 0
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:155-160
+    // itxn.AssetTransfer(
+    //     xfer_asset = asset,
+    //     asset_receiver = Txn.sender,
+    //     asset_amount = quantity,
+    //     fee = 0
+    // ).submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.bid(bid_pay: uint64, asset: uint64, nonce: bytes, owner: bytes, unitary_price: bytes, quantity: bytes) -> void:
+bid:
+    // smart_contracts/adv_marketplace/contract.py:163-165
+    // # start to bid
+    // @abimethod
+    // def bid(self, bid_pay: gtxn.PaymentTransaction, asset: Asset, nonce: arc4.UInt64, owner: arc4.Address, unitary_price: arc4.UInt64, quantity: arc4.UInt64) -> None:
+    proto 6 0
+    // smart_contracts/adv_marketplace/contract.py:166
+    // assert Txn.sender.is_opted_in(asset)                            #unitary_price: số tiền to bid
+    txn Sender
+    frame_dig -5
+    asset_holding_get AssetBalance
+    bury 1
+    assert
+    // smart_contracts/adv_marketplace/contract.py:167
+    // box_key = owner.bytes + op.itob(asset.id) + nonce.bytes
+    frame_dig -5
+    itob
+    frame_dig -3
+    swap
+    concat
+    frame_dig -4
+    concat
+    dup
+    // smart_contracts/adv_marketplace/contract.py:169-170
+    // # 0 -> 16 ( amount, unitary_price ) (storaged)
+    // current_bidder = Account(op.Box.extract(box_key, 16, 32)) # address -> 32 bytes
+    int 16
+    int 32
+    box_extract
+    dupn 2
+    len
+    int 32
+    ==
+    assert // Address length is 32 bytes
+    // smart_contracts/adv_marketplace/contract.py:171
+    // if current_bidder != Global.zero_address: # if current_bidder hasn't address yet
+    global ZeroAddress
+    !=
+    bz bid_after_if_else@3
+    // smart_contracts/adv_marketplace/contract.py:172
+    // current_bid_quantity = op.btoi(op.Box.extract(box_key, 48, 8)) # start at byte: 48 and the expand to 8 bytes
+    frame_dig 0
+    dup
+    int 48
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:173
+    // current_bid_unitary_price = op.btoi(op.Box.extract(box_key, 56, 8))
+    int 56
+    int 8
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:174
+    // assert unitary_price > current_bid_unitary_price
+    dup
+    itob
+    frame_dig -2
+    b<
+    assert
+    // smart_contracts/adv_marketplace/contract.py:177
+    // current_bid_quantity, current_bid_unitary_price, asset.decimals
+    frame_dig -5
+    asset_params_get AssetDecimals
+    assert // asset exists
+    // smart_contracts/adv_marketplace/contract.py:175-178
+    // # 1000 -> previous bidder
+    // current_bid_amount = self.quantity_price(
+    //     current_bid_quantity, current_bid_unitary_price, asset.decimals
+    // )
+    callsub quantity_price
+    // smart_contracts/adv_marketplace/contract.py:180-184
+    // itxn.Payment(
+    //     receiver = current_bidder,
+    //     amount = current_bid_amount,
+    //     fee = 0
+    // ).submit()
+    itxn_begin
+    itxn_field Amount
+    frame_dig 1
+    itxn_field Receiver
+    // smart_contracts/adv_marketplace/contract.py:180
+    // itxn.Payment(
+    int pay
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:183
+    // fee = 0
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:180-184
+    // itxn.Payment(
+    //     receiver = current_bidder,
+    //     amount = current_bid_amount,
+    //     fee = 0
+    // ).submit()
+    itxn_submit
+
+bid_after_if_else@3:
+    // smart_contracts/adv_marketplace/contract.py:186
+    // quantity.native,
+    frame_dig -1
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:187
+    // unitary_price.native,
+    frame_dig -2
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:188
+    // asset.decimals
+    frame_dig -5
+    asset_params_get AssetDecimals
+    assert // asset exists
+    // smart_contracts/adv_marketplace/contract.py:185-189
+    // amount_to_be_bid = self.quantity_price(
+    //     quantity.native,
+    //     unitary_price.native,
+    //     asset.decimals
+    // )
+    callsub quantity_price
+    // smart_contracts/adv_marketplace/contract.py:190
+    // assert bid_pay.sender == Txn.sender
+    frame_dig -6
+    gtxns Sender
+    txn Sender
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:191
+    // assert bid_pay.receiver == Global.current_application_address
+    frame_dig -6
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:192
+    // assert bid_pay.amount == amount_to_be_bid
+    frame_dig -6
+    gtxns Amount
+    ==
+    assert
+    // smart_contracts/adv_marketplace/contract.py:194
+    // op.Box.replace(box_key, 16, Txn.sender.bytes + quantity.bytes + unitary_price.bytes)
+    txn Sender
+    frame_dig -1
+    concat
+    frame_dig -2
+    concat
+    frame_dig 0
+    int 16
+    uncover 2
+    box_replace
+    retsub
+
+
+// smart_contracts.adv_marketplace.contract.AdvMarketplace.accept_bid(asset: uint64, nonce: bytes) -> void:
+accept_bid:
+    // smart_contracts/adv_marketplace/contract.py:196-197
+    // @abimethod # Terminated
+    // def accept_bid(self, asset: Asset, nonce: arc4.UInt64) -> None:
+    proto 2 0
+    // smart_contracts/adv_marketplace/contract.py:198
+    // box_key = Txn.sender.bytes + op.itob(asset.id) + nonce.bytes
+    txn Sender
+    frame_dig -2
+    itob
+    concat
+    frame_dig -1
+    concat
+    // smart_contracts/adv_marketplace/contract.py:200
+    // best_bidder = Account(op.Box.extract(box_key, 16, 32)) # address -> 32 bytes
+    dup
+    int 16
+    int 32
+    box_extract
+    dup
+    len
+    int 32
+    ==
+    assert // Address length is 32 bytes
+    // smart_contracts/adv_marketplace/contract.py:201
+    // assert best_bidder != Global.zero_address
+    global ZeroAddress
+    !=
+    assert
+    // smart_contracts/adv_marketplace/contract.py:203
+    // best_bid_quantity = op.btoi(op.Box.extract(box_key, 48, 8))
+    dup
+    int 48
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:204
+    // best_bid_unitary_price = op.btoi(op.Box.extract(box_key, 56, 8))
+    dup
+    int 56
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:205
+    // current_deposited = op.btoi(op.Box.extract(box_key, 48, 8))
+    dup
+    int 48
+    int 8
+    box_extract
+    btoi
+    swap
+    // smart_contracts/adv_marketplace/contract.py:206
+    // current_unitary_price = op.btoi(op.Box.extract(box_key, 8, 8))
+    dup
+    int 8
+    dup
+    box_extract
+    btoi
+    // smart_contracts/adv_marketplace/contract.py:208
+    // assert current_unitary_price > best_bid_unitary_price
+    dig 3
+    >
+    assert
+    // smart_contracts/adv_marketplace/contract.py:210-211
+    // # min_quantity
+    // min_quantity = current_deposited if current_deposited < best_bid_quantity else best_bid_quantity
+    dig 1
+    dig 4
+    <
+    swap
+    dig 4
+    dig 3
+    uncover 3
+    select
+    // smart_contracts/adv_marketplace/contract.py:214
+    // min_quantity, best_bid_unitary_price, asset.decimals
+    frame_dig -2
+    asset_params_get AssetDecimals
+    assert // asset exists
+    // smart_contracts/adv_marketplace/contract.py:212-215
+    // # 10_000 -> quantity -> 9000
+    // best_bid_amount = self.quantity_price(
+    //     min_quantity, best_bid_unitary_price, asset.decimals
+    // )
+    dig 1
+    uncover 5
+    uncover 2
+    callsub quantity_price
+    // smart_contracts/adv_marketplace/contract.py:217-221
+    // itxn.Payment(
+    //     receiver = Txn.sender,
+    //     amount = best_bid_amount,
+    //     fee = 0
+    // ).submit()
+    itxn_begin
+    // smart_contracts/adv_marketplace/contract.py:218
+    // receiver = Txn.sender,
+    txn Sender
+    itxn_field Receiver
+    itxn_field Amount
+    // smart_contracts/adv_marketplace/contract.py:217
+    // itxn.Payment(
+    int pay
+    itxn_field TypeEnum
+    // smart_contracts/adv_marketplace/contract.py:220
+    // fee = 0
+    int 0
+    itxn_field Fee
+    // smart_contracts/adv_marketplace/contract.py:217-221
+    // itxn.Payment(
+    //     receiver = Txn.sender,
+    //     amount = best_bid_amount,
+    //     fee = 0
+    // ).submit()
+    itxn_submit
+    // smart_contracts/adv_marketplace/contract.py:223
+    // op.Box.replace(box_key, 0, op.itob(current_deposited - min_quantity )) # 9_000 - 9_000
+    uncover 2
+    dig 1
+    -
+    itob
+    dig 2
+    int 0
+    uncover 2
+    box_replace
+    // smart_contracts/adv_marketplace/contract.py:224
+    // op.Box.replace(box_key, 48, op.itob(best_bid_quantity - min_quantity)) # 10_000 - 9000 = 100
+    uncover 2
+    swap
+    -
+    itob
+    int 48
+    swap
+    box_replace
+    retsub

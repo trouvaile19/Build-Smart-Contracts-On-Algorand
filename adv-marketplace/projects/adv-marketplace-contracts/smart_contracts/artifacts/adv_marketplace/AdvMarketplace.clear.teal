@@ -1,0 +1,8 @@
+#pragma version 10
+
+smart_contracts.adv_marketplace.contract.AdvMarketplace.clear_state_program:
+    // smart_contracts/adv_marketplace/contract.py:10-11
+    // # d, "MBR":  Minimum Balance Requirement
+    // class AdvMarketplace(ARC4Contract):
+    int 1
+    return
